@@ -160,7 +160,10 @@ namespace authenticateand_authorizationwith_token1.Services
 
         private string GenerateNewJsonWebToken(List<Claim> claims)
         {
-            var authSecret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var authSecret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])
+                );
+
+           
 
             var tokenObject = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
@@ -174,6 +177,28 @@ namespace authenticateand_authorizationwith_token1.Services
 
             return token;
         }
+        private async Task<List<Claim>> GetClaimsAsync(ApplicationUser user)
+        {
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.GivenName, user.FirstName),
+        new Claim(ClaimTypes.Surname, user.LastName),
+    };
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            return claims;
+        }
+
+
 
     }
 }

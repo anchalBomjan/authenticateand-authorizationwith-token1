@@ -1,10 +1,12 @@
-﻿using authenticateand_authorizationwith_token1.Models;
+﻿using authenticateand_authorizationwith_token1.Data;
+using authenticateand_authorizationwith_token1.Models;
 using authenticateand_authorizationwith_token1.Models.DTO;
 using authenticateand_authorizationwith_token1.Services;
 using authenticateand_authorizationwith_token1.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace authenticateand_authorizationwith_token1.Controllers
 {
@@ -17,13 +19,14 @@ namespace authenticateand_authorizationwith_token1.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IAuthService _authService;
-
-        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration , IAuthService authService/*, TokenService tokenService*/)
+        private readonly ApplicationDbContext _context;
+        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration , IAuthService authService, ApplicationDbContext context/*, TokenService tokenService*/)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _authService = authService;
+            _context = context;
 
 
         }
@@ -97,7 +100,7 @@ namespace authenticateand_authorizationwith_token1.Controllers
         }
     }
 
-
+   
 
 
 
