@@ -1,0 +1,6 @@
+@authenticateand_authorizationwith_token1_HostAddress = http://localhost:5097
+
+GET {{authenticateand_authorizationwith_token1_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
