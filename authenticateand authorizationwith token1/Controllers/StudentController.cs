@@ -1,6 +1,7 @@
 ﻿using authenticateand_authorizationwith_token1.Data;
 using authenticateand_authorizationwith_token1.Models;
 using authenticateand_authorizationwith_token1.Models.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ namespace authenticateand_authorizationwith_token1.Controllers
 
         // POST: api/Student
         [HttpPost]
+        [Authorize (Roles=StaticUserRoles.USER)]
         public async Task<IActionResult> Create([FromBody] StudentViewModel viewModel)
         {
             if (!ModelState.IsValid)
@@ -67,6 +69,7 @@ namespace authenticateand_authorizationwith_token1.Controllers
 
         // PUT: api/Student/{id}
         [HttpPut("{id}")]
+      // // [Authorize(Roles = StaticUserRoles.USER )]
         public async Task<IActionResult> Edit(string id, [FromBody] StudentViewModel viewModel)
         {
             if (string.IsNullOrEmpty(id) || !ModelState.IsValid)
@@ -90,6 +93,7 @@ namespace authenticateand_authorizationwith_token1.Controllers
 
         // DELETE: api/Student/{id}
         [HttpDelete("{id}")]
+       [Authorize(Roles = StaticUserRoles.USER + "," + StaticUserRoles.ADMIN)]
         public async Task<IActionResult> Delete(string id)
         {
             var student = await _context.Students.FindAsync(id);

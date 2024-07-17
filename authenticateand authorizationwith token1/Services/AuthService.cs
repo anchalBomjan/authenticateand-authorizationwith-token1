@@ -206,7 +206,7 @@ namespace authenticateand_authorizationwith_token1.Services
             var tokenObject = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(1),
+                    expires: DateTime.Now.AddHours(24),
                     claims: claims,
                     signingCredentials: new SigningCredentials(authSecret, SecurityAlgorithms.HmacSha256)
                 );

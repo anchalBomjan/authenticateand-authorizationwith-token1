@@ -51,7 +51,8 @@ namespace authenticateand_authorizationwith_token1.Controllers
         // POST: api/Course
        
         [HttpPost]
-        [Authorize(Roles = "Admin")] // Allow only Admin role
+        [Authorize(Roles = StaticUserRoles.USER + "," + StaticUserRoles.ADMIN)]
+
         public async Task<IActionResult> Create([FromBody] CourseViewModel viewModel)
         {
             if (!ModelState.IsValid)
@@ -73,7 +74,8 @@ namespace authenticateand_authorizationwith_token1.Controllers
 
         // PUT: api/Course/{id}
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")] // Allow only Admin role
+        [Authorize(Roles = StaticUserRoles.USER + "," + StaticUserRoles.ADMIN)]
+
         public async Task<IActionResult> Edit(int id, [FromBody] CourseViewModel viewModel)
         {
             if (id <= 0 || !ModelState.IsValid)
@@ -97,7 +99,8 @@ namespace authenticateand_authorizationwith_token1.Controllers
 
         // DELETE: api/Course/{id}
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")] // Allow only Admin role
+        [Authorize(Roles = StaticUserRoles.OWNER + "," + StaticUserRoles.ADMIN)]
+
         public async Task<IActionResult> Delete(int id)
         {
             var course = await _context.Courses.FindAsync(id);

@@ -34,11 +34,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-////builder.Services.AddSingleton<TokenService>();
-//builder.Services.AddScoped<TokenService>();
+
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddControllers();
 
+// Add JWT Bearer authentication
 
 builder.Services.AddAuthentication(options =>
 {
@@ -61,38 +62,49 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddControllers();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+//Locker 
+// Register Swagger generator
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "DatingApp", Version = "v1" });
-    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "DatingApp", Version = "v1" });
+
+    // Define the security scheme that will be used (Bearer Authentication)
+    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
     {
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = JwtBearerDefaults.AuthenticationScheme,
-        Description = "Enter 'Bearer' followed by a space and your JWT"
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        Description = "Enter 'Bearer' followed by space and then your token",
     });
+
+    // Configure the operation filter to include the security schemes in the Swagger UI
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
+
+    // Set up a requirement for the specific operations
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
         {
-            new OpenApiSecurityScheme
             {
-                Reference= new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id= JwtBearerDefaults.AuthenticationScheme
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = JwtBearerDefaults.AuthenticationScheme
+                    },
+                    Scheme = "oauth2",
+                    Name = JwtBearerDefaults.AuthenticationScheme,
+                    In = ParameterLocation.Header,
                 },
-                Scheme = "Oauth2",
-                Name = JwtBearerDefaults.AuthenticationScheme,
-                In = ParameterLocation.Header
-            },
-            new List<string>()
-        }
-    });
+                new List<string>()
+            }
+        });
 });
 
 var app = builder.Build();

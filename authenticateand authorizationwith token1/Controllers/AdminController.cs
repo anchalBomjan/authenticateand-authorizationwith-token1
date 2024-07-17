@@ -52,7 +52,7 @@ namespace authenticateand_authorizationwith_token1.Controllers
         }
 
         [HttpPost("AssignRole")]
-        //[Authorize(Roles = StaticUserRoles.OWNER)]
+        [Authorize(Roles = StaticUserRoles.OWNER)]
         public async Task<IActionResult> AssignRole(string email, string roleName)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -80,7 +80,7 @@ namespace authenticateand_authorizationwith_token1.Controllers
         // Route -> make user -> admin
         [HttpPost]
         [Route("make-admin")]
-       // [Authorize(Roles = StaticUserRoles.OWNER)]
+        [Authorize(Roles = StaticUserRoles.OWNER)]
         public async Task<IActionResult> MakeAdmin([FromBody] UpdatePermissionDto updatePermissionDto)
         {
             var operationResult = await _authService.MakeAdminAsync(updatePermissionDto);
