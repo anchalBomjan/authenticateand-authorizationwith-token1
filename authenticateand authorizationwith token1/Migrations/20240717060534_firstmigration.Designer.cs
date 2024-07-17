@@ -12,7 +12,7 @@ using authenticateand_authorizationwith_token1.Data;
 namespace authenticateand_authorizationwith_token1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240716095940_firstmigration")]
+    [Migration("20240717060534_firstmigration")]
     partial class firstmigration
     {
         /// <inheritdoc />

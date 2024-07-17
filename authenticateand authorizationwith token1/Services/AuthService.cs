@@ -24,42 +24,77 @@ namespace authenticateand_authorizationwith_token1.Services
         }
 
 
+        //public async Task<AuthServiceResponseDto> LoginAsync(LoginDto loginDto)
+        //{
+        //    var user = await _userManager.FindByNameAsync(loginDto.UserName);
+
+        //    if (user is null)
+        //        return new AuthServiceResponseDto()
+        //        {
+        //            IsSucceed = false,
+        //            Message = "Invalid Credentials"
+        //        };
+
+        //    var isPasswordCorrect = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+
+        //    if (!isPasswordCorrect)
+        //        return new AuthServiceResponseDto()
+        //        {
+        //            IsSucceed = false,
+        //            Message = "Invalid Credentials"
+        //        };
+
+        //    var userRoles = await _userManager.GetRolesAsync(user);
+
+        //    var authClaims = new List<Claim>
+        //    {
+
+        //        new Claim(ClaimTypes.NameIdentifier, user.Id),
+        //        new Claim("JWTID", Guid.NewGuid().ToString()),
+        //        new Claim("FirstName", user.FirstName),
+        //        new Claim("LastName", user.LastName),
+        //    };
+
+        //    foreach (var userRole in userRoles)
+        //    {
+        //        authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+        //    }
+
+        //    var token = GenerateNewJsonWebToken(authClaims);
+
+        //    return new AuthServiceResponseDto()
+        //    {
+        //        IsSucceed = true,
+        //        Message = token
+        //    };
+        //}
+
+
         public async Task<AuthServiceResponseDto> LoginAsync(LoginDto loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.UserName);
 
-            if (user is null)
+            if (user == null)
+            {
                 return new AuthServiceResponseDto()
                 {
                     IsSucceed = false,
                     Message = "Invalid Credentials"
                 };
+            }
 
             var isPasswordCorrect = await _userManager.CheckPasswordAsync(user, loginDto.Password);
 
             if (!isPasswordCorrect)
+            {
                 return new AuthServiceResponseDto()
                 {
                     IsSucceed = false,
                     Message = "Invalid Credentials"
                 };
-
-            var userRoles = await _userManager.GetRolesAsync(user);
-
-            var authClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim("JWTID", Guid.NewGuid().ToString()),
-                new Claim("FirstName", user.FirstName),
-                new Claim("LastName", user.LastName),
-            };
-
-            foreach (var userRole in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
             }
 
+            var authClaims = await GetClaimsAsync(user);
             var token = GenerateNewJsonWebToken(authClaims);
 
             return new AuthServiceResponseDto()
@@ -68,6 +103,9 @@ namespace authenticateand_authorizationwith_token1.Services
                 Message = token
             };
         }
+
+
+
 
         public async Task<AuthServiceResponseDto> MakeAdminAsync(UpdatePermissionDto updatePermissionDto)
         {
@@ -180,13 +218,15 @@ namespace authenticateand_authorizationwith_token1.Services
         private async Task<List<Claim>> GetClaimsAsync(ApplicationUser user)
         {
             var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.NameIdentifier, user.Id),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim(ClaimTypes.Email, user.Email),
-        new Claim(ClaimTypes.GivenName, user.FirstName),
-        new Claim(ClaimTypes.Surname, user.LastName),
-    };
+             {
+
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.GivenName, user.FirstName),
+                new Claim(ClaimTypes.Surname, user.LastName),
+
+            };
 
             var roles = await _userManager.GetRolesAsync(user);
 

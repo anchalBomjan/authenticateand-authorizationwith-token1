@@ -21,7 +21,8 @@ namespace authenticateand_authorizationwith_token1.Controllers
         }
 
         // GET: api/Course
-        [HttpGet]
+        [HttpGet("public")]
+       // [Authorize]
         public async Task<IActionResult> Index()
         {
             var courses = await _context.Courses.ToListAsync();
@@ -30,6 +31,7 @@ namespace authenticateand_authorizationwith_token1.Controllers
 
         // GET: api/Course/{id}
         [HttpGet("{id}")]
+
         public async Task<IActionResult> GetCourse(int id)
         {
             if (id <= 0)

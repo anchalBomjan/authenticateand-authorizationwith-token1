@@ -2,7 +2,7 @@
 {
     public  static class StaticUserRoles
     {
-        public const string OWNER = "Admin";
+        public const string OWNER = "Ownner";
         public const string ADMIN = "Teacher";
         public const string USER = "Student";
     }

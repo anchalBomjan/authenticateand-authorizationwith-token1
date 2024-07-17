@@ -3,6 +3,7 @@ using authenticateand_authorizationwith_token1.Models;
 using authenticateand_authorizationwith_token1.Models.DTO;
 using authenticateand_authorizationwith_token1.Services;
 using authenticateand_authorizationwith_token1.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,19 +20,21 @@ namespace authenticateand_authorizationwith_token1.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IAuthService _authService;
-        private readonly ApplicationDbContext _context;
-        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration , IAuthService authService, ApplicationDbContext context/*, TokenService tokenService*/)
+        //private readonly ApplicationDbContext _context;
+        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration , IAuthService authService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _authService = authService;
-            _context = context;
+            //_context = context;
 
 
         }
 
         [HttpPost("SeedRoles")]
+       
+       [Authorize(Roles = StaticUserRoles.OWNER)]
         public async Task<IActionResult> SeedRoles()
         {
             string[] roleNames = { StaticUserRoles.OWNER, StaticUserRoles.ADMIN, StaticUserRoles.USER };
@@ -49,6 +52,7 @@ namespace authenticateand_authorizationwith_token1.Controllers
         }
 
         [HttpPost("AssignRole")]
+        //[Authorize(Roles = StaticUserRoles.OWNER)]
         public async Task<IActionResult> AssignRole(string email, string roleName)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -76,6 +80,7 @@ namespace authenticateand_authorizationwith_token1.Controllers
         // Route -> make user -> admin
         [HttpPost]
         [Route("make-admin")]
+       // [Authorize(Roles = StaticUserRoles.OWNER)]
         public async Task<IActionResult> MakeAdmin([FromBody] UpdatePermissionDto updatePermissionDto)
         {
             var operationResult = await _authService.MakeAdminAsync(updatePermissionDto);
@@ -88,7 +93,8 @@ namespace authenticateand_authorizationwith_token1.Controllers
 
         // Route -> make user -> owner
         [HttpPost]
-        [Route("make-owner")]
+      //  [Route("make-owner")]
+        [Authorize(Roles = StaticUserRoles.OWNER)]
         public async Task<IActionResult> MakeOwner([FromBody] UpdatePermissionDto updatePermissionDto)
         {
             var operationResult = await _authService.MakeOwnerAsync(updatePermissionDto);
